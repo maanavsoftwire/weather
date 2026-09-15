@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { convertPostcodeToCoordinates, getForecast } from './api';
 import MapPicker from './MapPicker';
-import { resolveTimeZone, formatLocalTime } from './timezone';
+import { resolveTimeZone, formatLocalTime, getCurrentHourInTimeZone } from './timezone';
 
 interface ForecastSummary {
   locationName: string;
   timesteps: { time: string; temperature: number }[];
   rainExpected: boolean;
+  timeZone: string;
 }
 
 function willRain(probOfPrecipitation: number, precipitationRate: number): boolean {
   return probOfPrecipitation >= 50 && precipitationRate > 0.1;
 }
 
-function isNightTime(): boolean {
-    const hour = new Date().getHours();
+function isNightTime(hour: number): boolean {
     return hour >= 19 || hour < 5;
 }
 
@@ -48,6 +48,7 @@ async function fetchForecastSummary(
       temperature: step.screenTemperature,
     })),
     rainExpected: nextTimesteps.some((step) => willRain(step.probOfPrecipitation, step.precipitationRate)),
+    timeZone,
   };
 }
 
@@ -87,7 +88,8 @@ function App(): React.ReactElement {
     }
 
     const isRaining = forecast?.rainExpected ?? false;
-    const isNight = isNightTime();
+    const displayTimeZone = forecast?.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const isNight = isNightTime(getCurrentHourInTimeZone(displayTimeZone));
 
     return <>
         <div className="weather-scene" aria-hidden="true">
