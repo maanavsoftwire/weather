@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { convertPostcodeToCoordinates, getForecast } from './api';
+import MapPicker from './MapPicker';
+import { resolveTimeZone, formatLocalTime } from './timezone';
 
 interface ForecastSummary {
   locationName: string;
@@ -16,16 +18,33 @@ function isNightTime(): boolean {
     return hour >= 19 || hour < 5;
 }
 
-async function fetchForecastSummary(postcode: string): Promise<ForecastSummary> {
-  const { latitude, longitude } = await convertPostcodeToCoordinates(postcode);
-  const forecast = await getForecast(latitude, longitude);
+async function fetchForecastSummary(postcode: string): Promise<ForecastSummary>;
+async function fetchForecastSummary(latitude: number, longitude: number): Promise<ForecastSummary>;
+async function fetchForecastSummary(
+  postcodeOrLat: string | number,
+  longitude?: number
+): Promise<ForecastSummary> {
+  let latitude: number;
+  let lng: number;
+
+  if (typeof postcodeOrLat === 'string') {
+    const coords = await convertPostcodeToCoordinates(postcodeOrLat);
+    latitude = coords.latitude;
+    lng = coords.longitude;
+  } else {
+    latitude = postcodeOrLat;
+    lng = longitude!;
+  }
+
+  const forecast = await getForecast(latitude, lng);
   const feature = forecast.features[0];
   const nextTimesteps = feature.properties.timeSeries.slice(0, 3);
+  const timeZone = resolveTimeZone(latitude, lng);
 
   return {
     locationName: feature.properties.location.name,
     timesteps: nextTimesteps.map((step) => ({
-      time: step.time.substring(11, 16),
+      time: formatLocalTime(step.time, timeZone),
       temperature: step.screenTemperature,
     })),
     rainExpected: nextTimesteps.some((step) => willRain(step.probOfPrecipitation, step.precipitationRate)),
@@ -37,14 +56,14 @@ function App(): React.ReactElement {
     const [forecast, setForecast] = useState<ForecastSummary | null>(null);
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [pickedCoords, setPickedCoords] = useState<{ lat: number; lon: number } | null>(null);
 
-    async function formHandler(event: React.FormEvent<HTMLFormElement>): Promise<void> {
-        event.preventDefault(); // to stop the form refreshing the page when it submits
+    async function loadForecast(fetcher: () => Promise<ForecastSummary>): Promise<void> {
         setError("");
         setForecast(null);
         setLoading(true);
         try {
-            const summary = await fetchForecastSummary(postcode);
+            const summary = await fetcher();
             setForecast(summary);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to fetch forecast");
@@ -53,8 +72,18 @@ function App(): React.ReactElement {
         }
     }
 
+    async function formHandler(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault(); // to stop the form refreshing the page when it submits
+        await loadForecast(() => fetchForecastSummary(postcode));
+    }
+
     function updatePostcode(data: React.ChangeEvent<HTMLInputElement>): void {
         setPostcode(data.target.value)
+    }
+
+    async function handleMapPick(lat: number, lon: number): Promise<void> {
+        setPickedCoords({ lat, lon });
+        await loadForecast(() => fetchForecastSummary(lat, lon));
     }
 
     const isRaining = forecast?.rainExpected ?? false;
@@ -100,6 +129,16 @@ function App(): React.ReactElement {
                 </button>
             </div>
         </form>
+
+        <section className="map-card">
+            <h2>Pick a location</h2>
+            <MapPicker onPick={handleMapPick} />
+            {pickedCoords && (
+                <div className="coords-readout">
+                    lat: {pickedCoords.lat.toFixed(5)}, lon: {pickedCoords.lon.toFixed(5)}
+                </div>
+            )}
+        </section>
 
         {error && <div className="alert alert-error" role="alert">{error}</div>}
 
