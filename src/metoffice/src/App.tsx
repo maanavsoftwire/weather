@@ -62,7 +62,7 @@ function App(): React.ReactElement {
                     type="text"
                     id="postcodeInput"
                     className="postcode-input"
-                    placeholder="e.g. SW1A 1AA"
+                    placeholder="e.g. NW5 1TL"
                     value={postcode}
                     onChange={updatePostcode}
                     autoComplete="postal-code"
