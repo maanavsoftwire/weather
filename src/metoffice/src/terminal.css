@@ -9,6 +9,10 @@
   --term-error: #ff5c5c;
   --term-warn: #ffd166;
   --term-cyan: #5cf0ff;
+  --term-sun: #ffd166;
+  --term-moon: #b9c6da;
+  --term-star: #e8ecef;
+  --term-cloud: #6b7378;
 
   --mono: 'Courier New', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
@@ -53,10 +57,249 @@ body {
 }
 
 .app {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 680px;
   margin: 0 auto;
   padding: 40px 24px 64px;
+}
+
+/* Pixel-art weather backdrop */
+
+.weather-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pixel-sun,
+.pixel-moon,
+.pixel-cloud {
+  --px: 10px;
+  position: absolute;
+  width: var(--px);
+  height: var(--px);
+  background: transparent;
+  image-rendering: pixelated;
+}
+
+.pixel-sun {
+  top: 56px;
+  right: 96px;
+  box-shadow:
+    calc(var(--px) * 3) calc(var(--px) * 0) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 0) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 1) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 1) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 1) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 1) 0 0 var(--term-sun),
+    calc(var(--px) * 0) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 7) calc(var(--px) * 2) 0 0 var(--term-sun),
+    calc(var(--px) * 1) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 6) calc(var(--px) * 3) 0 0 var(--term-sun),
+    calc(var(--px) * 1) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 6) calc(var(--px) * 4) 0 0 var(--term-sun),
+    calc(var(--px) * 0) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 7) calc(var(--px) * 5) 0 0 var(--term-sun),
+    calc(var(--px) * 2) calc(var(--px) * 6) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 6) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 6) 0 0 var(--term-sun),
+    calc(var(--px) * 5) calc(var(--px) * 6) 0 0 var(--term-sun),
+    calc(var(--px) * 3) calc(var(--px) * 7) 0 0 var(--term-sun),
+    calc(var(--px) * 4) calc(var(--px) * 7) 0 0 var(--term-sun);
+}
+
+.pixel-moon {
+  top: 56px;
+  right: 96px;
+  box-shadow:
+    calc(var(--px) * 3) calc(var(--px) * 0) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 0) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 1) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 1) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 1) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 1) 0 0 var(--term-moon),
+    calc(var(--px) * 1) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 6) calc(var(--px) * 2) 0 0 var(--term-moon),
+    calc(var(--px) * 1) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 6) calc(var(--px) * 3) 0 0 var(--term-moon),
+    calc(var(--px) * 1) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 6) calc(var(--px) * 4) 0 0 var(--term-moon),
+    calc(var(--px) * 1) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 6) calc(var(--px) * 5) 0 0 var(--term-moon),
+    calc(var(--px) * 2) calc(var(--px) * 6) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 6) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 6) 0 0 var(--term-moon),
+    calc(var(--px) * 5) calc(var(--px) * 6) 0 0 var(--term-moon),
+    calc(var(--px) * 3) calc(var(--px) * 7) 0 0 var(--term-moon),
+    calc(var(--px) * 4) calc(var(--px) * 7) 0 0 var(--term-moon);
+}
+
+.pixel-star {
+  position: absolute;
+  width: var(--px, 10px);
+  height: var(--px, 10px);
+  background: var(--term-star);
+}
+
+.pixel-star-a {
+  top: 28px;
+  right: 204px;
+}
+
+.pixel-star-b {
+  top: 88px;
+  right: 160px;
+}
+
+.pixel-star-c {
+  top: 130px;
+  right: 214px;
+}
+
+.pixel-cloud {
+  --px: 35px;
+  top: 40px;
+  box-shadow:
+    calc(var(--px) * 3) calc(var(--px) * 0) 0 0 var(--term-cloud),
+    calc(var(--px) * 4) calc(var(--px) * 0) 0 0 var(--term-cloud),
+    calc(var(--px) * 5) calc(var(--px) * 0) 0 0 var(--term-cloud),
+    calc(var(--px) * 6) calc(var(--px) * 0) 0 0 var(--term-cloud),
+    calc(var(--px) * 2) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 3) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 4) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 5) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 6) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 7) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 8) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 9) calc(var(--px) * 1) 0 0 var(--term-cloud),
+    calc(var(--px) * 1) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 2) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 3) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 4) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 5) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 6) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 7) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 8) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 9) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 10) calc(var(--px) * 2) 0 0 var(--term-cloud),
+    calc(var(--px) * 0) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 1) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 2) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 3) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 4) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 5) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 6) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 7) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 8) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 9) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 10) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 11) calc(var(--px) * 3) 0 0 var(--term-cloud),
+    calc(var(--px) * 1) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 2) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 3) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 4) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 5) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 6) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 7) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 8) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 9) calc(var(--px) * 4) 0 0 var(--term-cloud),
+    calc(var(--px) * 10) calc(var(--px) * 4) 0 0 var(--term-cloud);
+  opacity: 0.99;
+}
+
+.pixel-cloud-left {
+  left: 56px;
+}
+
+.pixel-cloud-right {
+  right: 440px;
+  top: 188px;
+}
+
+.pixel-cloud-middle {
+  right: 540px;
+  top: 140px;
+}
+
+.rain-overlay {
+  position: absolute;
+  inset: -20% -20%;
+  background-image: linear-gradient(
+    115deg,
+    transparent 42%,
+    var(--term-fg-dim) 42%,
+    var(--term-fg-dim) 58%,
+    transparent 58%
+  );
+  background-size: 24px 40px;
+  opacity: 0.4;
+  animation: rain-fall 0.5s linear infinite;
+}
+
+@keyframes rain-fall {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -24px 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pixel-sun,
+  .pixel-moon {
+    right: 24px;
+  }
+
+  .pixel-star-a,
+  .pixel-star-b,
+  .pixel-star-c {
+    display: none;
+  }
+
+  .pixel-cloud-right {
+    right: 24px;
+  }
+
+  .pixel-cloud-left {
+    left: 20px;
+  }
 }
 
 h1 {

@@ -11,6 +11,11 @@ function willRain(probOfPrecipitation: number, precipitationRate: number): boole
   return probOfPrecipitation >= 50 && precipitationRate > 0.1;
 }
 
+function isNightTime(): boolean {
+    const hour = new Date().getHours();
+    return hour >= 19 || hour < 5;
+}
+
 async function fetchForecastSummary(postcode: string): Promise<ForecastSummary> {
   const { latitude, longitude } = await convertPostcodeToCoordinates(postcode);
   const forecast = await getForecast(latitude, longitude);
@@ -52,7 +57,30 @@ function App(): React.ReactElement {
         setPostcode(data.target.value)
     }
 
-    return <div className="app">
+    const isRaining = forecast?.rainExpected ?? false;
+    const isNight = isNightTime();
+
+    return <>
+        <div className="weather-scene" aria-hidden="true">
+            {isRaining ? (
+                <>
+                    <div className="pixel-cloud pixel-cloud-left" />
+                    <div className="pixel-cloud pixel-cloud-right" />
+                    <div className="pixel-cloud pixel-cloud-middle" />
+                    <div className="rain-overlay" />
+                </>
+            ) : isNight ? (
+                <div className="pixel-moon">
+                    <span className="pixel-star pixel-star-a" />
+                    <span className="pixel-star pixel-star-b" />
+                    <span className="pixel-star pixel-star-c" />
+                </div>
+            ) : (
+                <div className="pixel-sun" />
+            )}
+        </div>
+
+        <div className="app">
         <h1>Met Office Weather</h1>
 
         <form className="postcode-form" onSubmit={formHandler}>
@@ -94,6 +122,7 @@ function App(): React.ReactElement {
                     : "No rain expected soon. Enjoy your day!"}</span>
             </div>
         </section>}
-    </div>;
+        </div>
+    </>;
 }
 export default App;
