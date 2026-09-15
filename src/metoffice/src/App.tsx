@@ -52,31 +52,48 @@ function App(): React.ReactElement {
         setPostcode(data.target.value)
     }
 
-    return <>
-        <h1> Met Office Weather </h1>
-        <form onSubmit={formHandler}>
-            <label htmlFor="postcodeInput"> Postcode: </label>
-            <input type="text" id="postcodeInput" onChange={updatePostcode}/>
-            <input type="submit" value="Submit" disabled={loading}/>
+    return <div className="app">
+        <h1>Met Office Weather</h1>
+
+        <form className="postcode-form" onSubmit={formHandler}>
+            <label htmlFor="postcodeInput">Postcode</label>
+            <div className="postcode-form-controls">
+                <input
+                    type="text"
+                    id="postcodeInput"
+                    className="postcode-input"
+                    placeholder="e.g. SW1A 1AA"
+                    value={postcode}
+                    onChange={updatePostcode}
+                    autoComplete="postal-code"
+                />
+                <button type="submit" className="submit-button" disabled={loading || !postcode.trim()}>
+                    {loading ? "Loading…" : "Get forecast"}
+                </button>
+            </div>
         </form>
-        {loading && <p>Loading forecast...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {forecast && <div>
+
+        {error && <div className="alert alert-error" role="alert">{error}</div>}
+
+        {forecast && <section className="forecast-card">
             <h2>{forecast.locationName}</h2>
-            <table>
-                <thead>
-                    <tr><th>Time</th><th>Temperature (&deg;C)</th></tr>
-                </thead>
-                <tbody>
-                    {forecast.timesteps.map((step) => (
-                        <tr key={step.time}><td>{step.time}</td><td>{step.temperature}</td></tr>
-                    ))}
-                </tbody>
-            </table>
-            <p>{forecast.rainExpected
-                ? "Carry an umbrella! Rain is expected soon."
-                : "No rain expected soon. Enjoy your day!"}</p>
-        </div>}
-    </>;
+
+            <div className="timesteps">
+                {forecast.timesteps.map((step) => (
+                    <div className="timestep" key={step.time}>
+                        <span className="timestep-time">{step.time}</span>
+                        <span className="timestep-temp">{Math.round(step.temperature)}&deg;</span>
+                    </div>
+                ))}
+            </div>
+
+            <div className={`rain-banner ${forecast.rainExpected ? "rain-yes" : "rain-no"}`}>
+                <span className="rain-icon" aria-hidden="true">{forecast.rainExpected ? "☂️" : "☀️"}</span>
+                <span>{forecast.rainExpected
+                    ? "Carry an umbrella! Rain is expected soon."
+                    : "No rain expected soon. Enjoy your day!"}</span>
+            </div>
+        </section>}
+    </div>;
 }
 export default App;
